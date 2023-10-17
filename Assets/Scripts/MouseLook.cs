@@ -5,6 +5,7 @@ using UnityEngine;
 public class MouseLook : MonoBehaviour {
     [SerializeField] private float mouseSensitivity = 100f;
     [SerializeField] private Transform player;
+    [SerializeField] private float rotateSpeed = 10f;
      private float xRotation = 0f;
     void Start() {
         Cursor.lockState = CursorLockMode.Locked;
@@ -16,7 +17,7 @@ public class MouseLook : MonoBehaviour {
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation,-90f,90f);
 
-        transform.localRotation = Quaternion.Euler(xRotation,0f,0f);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation,Quaternion.Euler(xRotation,0f,0f),rotateSpeed * Time.deltaTime);
         player.Rotate(Vector3.up * mouseX);
     }
 }
