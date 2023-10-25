@@ -27,7 +27,9 @@ public class Player : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         HandleMovement();
-        HandleInteractions();
+        if(Input.GetKey(KeyCode.E)) {
+            HandleInteractions();
+        }
     }
     private void HandleMovement() {
         //creates sphere at bottom of player to check if they have reached the ground
@@ -66,7 +68,7 @@ public class Player : MonoBehaviour {
         Vector3 movDir = transform.right * x + transform.forward * z;
 
         if(Physics.Raycast(transform.position,movDir,out RaycastHit hitInfo,2f,interactLayer)) {
-            Debug.Log(hitInfo.transform);
+            Debug.Log("Interact!");
         }
     }
 }
