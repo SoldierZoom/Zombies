@@ -11,12 +11,13 @@ public class Player : MonoBehaviour {
 
     [SerializeField] private float gravityMag = -9.8f;
     [SerializeField] private Transform groundCheck;
-    float groundDistance = 0.4f;
+    private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float jumpStrength=10f;
-
     Vector3 v;
     bool isGrounded;
+
+    [SerializeField] private LayerMask interactLayer;
 
     // Start is called before the first frame update
     void Start() {
@@ -26,6 +27,7 @@ public class Player : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         HandleMovement();
+        HandleInteractions();
     }
     private void HandleMovement() {
         //creates sphere at bottom of player to check if they have reached the ground
@@ -45,7 +47,7 @@ public class Player : MonoBehaviour {
             sprintMultiplier = 3f;
         }
         //provides charcter controller with movement vector for player
-        characterController.Move(movDir*movSpeed*sprintMultiplier*Time.deltaTime);
+        characterController.Move(movDir.normalized*movSpeed*sprintMultiplier*Time.deltaTime);
 
         if(isGrounded && Input.GetButtonDown("Jump")) {
             v.y = Mathf.Sqrt(jumpStrength * -2f * gravityMag);
@@ -56,5 +58,15 @@ public class Player : MonoBehaviour {
         //adds gravity to player
         v.y += gravityMag * Time.deltaTime;
         characterController.Move(v * Time.deltaTime);
+    }
+
+    private void HandleInteractions() {
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+        Vector3 movDir = transform.right * x + transform.forward * z;
+
+        if(Physics.Raycast(transform.position,movDir,out RaycastHit hitInfo,2f,interactLayer)) {
+            Debug.Log(hitInfo.transform);
+        }
     }
 }
