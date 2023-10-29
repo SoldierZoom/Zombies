@@ -11,10 +11,6 @@ public class PlayerAnimator : MonoBehaviour {
     private void Update() {
         animator.SetBool("isWalking",player.IsWalking);
         animator.SetBool("isSprinting",player.IsSprinting);
-        animator.SetBool("isFalling",player.IsFalling);
-        if (player.IsJumping) {
-            animator.Play("Jumping",-1,0f);
-            Debug.Log("test");
-        }
+        animator.SetBool("isJumping",player.IsJumping);
     }
 }

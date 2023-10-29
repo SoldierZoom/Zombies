@@ -20,7 +20,7 @@ public class Player : MonoBehaviour {
     //interaction
     [SerializeField] private LayerMask interactLayer;
     //animation states
-    bool isWalking, isSprinting, isJumping, isFalling;
+    bool isWalking, isSprinting, isJumping;
 
     // Start is called before the first frame update
     void Start() {
@@ -39,7 +39,6 @@ public class Player : MonoBehaviour {
         isWalking = false;
         isSprinting = false;
         isJumping = false;
-        isFalling = false;
         //creates sphere at bottom of player to check if they have reached the ground
         isGrounded = Physics.CheckSphere(groundCheck.position,groundDistance,groundLayer);
         //sets velocity to -2 when player reaches the ground
@@ -64,7 +63,9 @@ public class Player : MonoBehaviour {
         //provides charcter controller with movement vector for player 
         characterController.Move(movDir.normalized*movSpeed*sprintMultiplier*Time.deltaTime);
 
+        //executes jump ability if player is on the ground
         if(isGrounded && Input.GetButtonDown("Jump")) {
+            //sets velocity to initial velocity required to reach desired jump height
             v.y = Mathf.Sqrt(jumpStrength * -2f * gravityMag);
             isJumping = true;
         }
@@ -72,10 +73,6 @@ public class Player : MonoBehaviour {
         //adds gravity to player
         v.y += gravityMag * Time.deltaTime;
         characterController.Move(v * Time.deltaTime);
-
-        if(!isGrounded&&v.y<0) {
-            isFalling=true;
-        }
     }
 
     private void HandleInteractions() {
@@ -93,5 +90,4 @@ public class Player : MonoBehaviour {
     public bool IsWalking { get { return isWalking; } }
     public bool IsSprinting { get { return isSprinting; } }
     public bool IsJumping { get { return isJumping; } }
-    public bool IsFalling { get { return isFalling; } }
 }
