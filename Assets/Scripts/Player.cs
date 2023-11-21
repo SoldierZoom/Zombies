@@ -10,11 +10,11 @@ public class Player : MonoBehaviour {
     [SerializeField] private float movSpeed = 7f;
     private float sprintMultiplier;
     //gravity
-    [SerializeField] private float gravityMag = -9.8f;
+    [SerializeField] private float gravity = -9.8f;
     [SerializeField] private Transform groundCheck;
     private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float jumpStrength=10f;
+    [SerializeField] private float jumpHeight=10f;
     Vector3 v;
     bool isGrounded;
     //interaction
@@ -66,12 +66,12 @@ public class Player : MonoBehaviour {
         //executes jump ability if player is on the ground
         if(isGrounded && Input.GetButtonDown("Jump")) {
             //sets velocity to initial velocity required to reach desired jump height
-            v.y = Mathf.Sqrt(jumpStrength * -2f * gravityMag);
+            v.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isJumping = true;
         }
 
         //adds gravity to player
-        v.y += gravityMag * Time.deltaTime;
+        v.y += gravity * Time.deltaTime;
         characterController.Move(v * Time.deltaTime);
     }
 
