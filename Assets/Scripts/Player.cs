@@ -76,13 +76,17 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleInteractions() {
+        float playerHeight = 3f;
         //creating 3D vector for direction player is looking/moving
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
         Vector3 movDir = transform.right * x + transform.forward * z;
 
+
         //checking if object in the interact layer is within 2 units of the player in the direction they're looking
-        if(Physics.Raycast(transform.position,movDir,out RaycastHit hitInfo,2f,interactLayer)) {
+        if(Physics.CapsuleCast(transform.position + Vector3.up * playerHeight,transform.position,.5f,movDir,out RaycastHit hitInfo,2f,interactLayer)) {
+            //Physics.CapsuleCast(transform.position+Vector3.up*playerHeight, transform.position, .5f, movDir, out RaycastHit hitInfo, 2f, interactLayer)
+            //Physics.Raycast(transform.position+Vector3.up*playerHeight,movDir,out RaycastHit hitInfo,2f,interactLayer)
             Debug.Log("Interact!");
         }
     }
