@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,8 @@ public class Player : MonoBehaviour {
     [SerializeField] private LayerMask interactLayer;
     //picking up weapon
     [SerializeField] private Transform playerRightHand;
+    private Transform weaponRef;
+    private bool weaponInHand;
     //animation states
     bool isWalking, isSprinting, isJumping;
 
@@ -35,6 +38,7 @@ public class Player : MonoBehaviour {
         if(Input.GetKey(KeyCode.E)) {
             HandleInteractions();
         }
+        HandleControls();
     }
     private void HandleMovement() {
         //reseting all animation states
@@ -89,15 +93,29 @@ public class Player : MonoBehaviour {
         if(Physics.CapsuleCast(transform.position + Vector3.up * playerHeight,transform.position,.5f,movDir,out RaycastHit hitInfo,2f,interactLayer)) {
             //Physics.CapsuleCast(transform.position+Vector3.up*playerHeight, transform.position, .5f, movDir, out RaycastHit hitInfo, 2f, interactLayer)
             //Physics.Raycast(transform.position+Vector3.up*playerHeight,movDir,out RaycastHit hitInfo,2f,interactLayer)
-            if(hitInfo.transform.CompareTag("Weapon")) {
-                hitInfo.transform.position = playerRightHand.position;
-                hitInfo.transform.parent = playerRightHand;
-                hitInfo.transform.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
-                hitInfo.transform.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
+            if(hitInfo.transform.CompareTag("Weapon")&&weaponInHand==false) {
+                weaponRef = hitInfo.transform;
+                weaponRef.GetComponent<Rigidbody>().isKinematic = true;
+                weaponRef.parent = playerRightHand;
+                weaponRef.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
+                weaponRef.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
+                weaponInHand = true;
+                Debug.Log("Weapon in hand = "+weaponInHand.ToString());
             }
             Debug.Log("Interact!");
         }
     }
+    
+    private void HandleControls() {
+        if(weaponInHand && Input.GetKeyDown(KeyCode.Q)) {
+            weaponRef.GetComponent<Rigidbody>().isKinematic = false;
+            weaponRef.parent = null;
+            weaponInHand = false;
+            Debug.Log("Weapon dropped");
+        }
+    }
+
+
 
     public bool IsWalking { get { return isWalking; } }
     public bool IsSprinting { get { return isSprinting; } }
