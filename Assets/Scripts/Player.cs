@@ -25,7 +25,7 @@ public class Player : MonoBehaviour {
     private Transform weaponRef;
     private bool weaponInHand;
     //animation states
-    bool isWalking, isSprinting, isJumping;
+    bool isWalking, isSprinting, isJumping, isAttacking;
 
     // Start is called before the first frame update
     void Start() {
@@ -107,12 +107,17 @@ public class Player : MonoBehaviour {
     }
     
     private void HandleControls() {
+        isAttacking = false;
         if(weaponInHand && Input.GetKeyDown(KeyCode.Q)) {
             weaponRef.GetComponent<Rigidbody>().isKinematic = false;
             weaponRef.parent = null;
             weaponInHand = false;
             Debug.Log("Weapon dropped");
+        } else if(weaponInHand && Input.GetKeyDown(KeyCode.Mouse0)) {
+            isAttacking = true;
+            Debug.Log("Attack!");
         }
+
     }
 
 
@@ -120,4 +125,5 @@ public class Player : MonoBehaviour {
     public bool IsWalking { get { return isWalking; } }
     public bool IsSprinting { get { return isSprinting; } }
     public bool IsJumping { get { return isJumping; } }
+    public bool IsAttacking { get { return isAttacking; } }
 }

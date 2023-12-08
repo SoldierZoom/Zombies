@@ -12,5 +12,6 @@ public class PlayerAnimator : MonoBehaviour {
         animator.SetBool("isWalking",player.IsWalking);
         animator.SetBool("isSprinting",player.IsSprinting);
         animator.SetBool("isJumping",player.IsJumping);
+        animator.SetBool("isAttacking",player.IsAttacking);
     }
 }
