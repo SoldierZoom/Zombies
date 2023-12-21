@@ -24,8 +24,8 @@ public class Player : MonoBehaviour {
     [SerializeField] private Transform playerRightHand;
     private Transform weaponRef;
     private bool weaponInHand;
-    //animation states
-    bool isWalking, isSprinting, isJumping, isAttacking;
+    //animation state bools
+    private bool isWalking, isSprinting, isJumping, isAttacking, isMelee;
 
     // Start is called before the first frame update
     void Start() {
@@ -100,7 +100,11 @@ public class Player : MonoBehaviour {
                 weaponRef.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
                 weaponRef.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
                 weaponInHand = true;
-                Debug.Log("Weapon in hand = "+weaponInHand.ToString());
+                Debug.Log("Weapon in hand = "+weaponRef.name);
+                if(weaponRef.name == "BaseballBat") {
+                    isMelee = true;
+                    Debug.Log("Weapon is melee");
+                }
             }
             Debug.Log("Interact!");
         }
@@ -112,6 +116,7 @@ public class Player : MonoBehaviour {
             weaponRef.GetComponent<Rigidbody>().isKinematic = false;
             weaponRef.parent = null;
             weaponInHand = false;
+            isMelee=false;
             Debug.Log("Weapon dropped");
         } else if(weaponInHand && Input.GetKeyDown(KeyCode.Mouse0)) {
             isAttacking = true;
@@ -126,4 +131,6 @@ public class Player : MonoBehaviour {
     public bool IsSprinting { get { return isSprinting; } }
     public bool IsJumping { get { return isJumping; } }
     public bool IsAttacking { get { return isAttacking; } }
+    public bool IsMelee { get { return isMelee; } }
+
 }
