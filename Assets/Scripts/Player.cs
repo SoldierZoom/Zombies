@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -21,11 +22,11 @@ public class Player : MonoBehaviour {
     //interaction
     [SerializeField] private LayerMask interactLayer;
     //picking up weapon
-    [SerializeField] private Transform playerRightHand;
-    private Transform weaponRef;
-    private bool weaponInHand;
+    [SerializeField] private Transform playerRightHand, playerLeftHand;
+    private Transform weaponRef, rightHandSO, leftHandSO;
+    //private bool weaponInHand;
     //animation state bools
-    private bool isWalking, isSprinting, isJumping, isAttacking, isMelee;
+    private bool isWalking, isSprinting, isJumping, isAttacking, isMelee, rightHandWeapon, leftHandWeapon;
 
     // Start is called before the first frame update
     void Start() {
@@ -88,37 +89,90 @@ public class Player : MonoBehaviour {
         float z = Input.GetAxis("Vertical");
         Vector3 movDir = transform.right * x + transform.forward * z;
 
-
+        weaponRef = null;
         //checking if object in the interact layer is within 2 units of the player in the direction they're looking
         if(Physics.CapsuleCast(transform.position + Vector3.up * playerHeight,transform.position,.5f,movDir,out RaycastHit hitInfo,2f,interactLayer)) {
             //Physics.CapsuleCast(transform.position+Vector3.up*playerHeight, transform.position, .5f, movDir, out RaycastHit hitInfo, 2f, interactLayer)
             //Physics.Raycast(transform.position+Vector3.up*playerHeight,movDir,out RaycastHit hitInfo,2f,interactLayer)
-            if(hitInfo.transform.CompareTag("Weapon")&&weaponInHand==false) {
+            weaponRef = hitInfo.transform;
+            if(weaponRef.CompareTag("Melee")) {
+                if(rightHandWeapon == false) {
+                    weaponRef.GetComponent<Rigidbody>().isKinematic = true;
+                    weaponRef.parent = playerRightHand;
+                    weaponRef.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
+                    weaponRef.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
+
+                    rightHandWeapon = true;
+                    Debug.Log("Right Weapon in hand = " + weaponRef.name);
+                } else if(rightHandWeapon == true && leftHandWeapon==false) {
+                    weaponRef.GetComponent<Rigidbody>().isKinematic = true;
+                    weaponRef.parent = playerLeftHand;
+                    weaponRef.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
+                    weaponRef.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
+
+                    leftHandWeapon = true;
+                    Debug.Log("Left Weapon in hand = " + weaponRef.name);
+                }
+            } /*else if (hitInfo.transform.CompareTag("Weapon")&&weaponInHand==false&&isOneHanded==true&&isDualWielding==true) {
                 weaponRef = hitInfo.transform;
                 weaponRef.GetComponent<Rigidbody>().isKinematic = true;
                 weaponRef.parent = playerRightHand;
                 weaponRef.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
                 weaponRef.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
                 weaponInHand = true;
-                Debug.Log("Weapon in hand = "+weaponRef.name);
+                Debug.Log("Weapon in hand = " + weaponRef.name);
                 if(weaponRef.name == "BaseballBat") {
                     isMelee = true;
+                    isOneHanded = true;
+                    isDualWielding = false;
                     Debug.Log("Weapon is melee");
                 }
-            }
-            Debug.Log("Interact!");
+            }*/
+            /*if(hitInfo.transform.CompareTag("Melee")) {
+                if(rightHandWeapon==false) {
+                    weaponRef = hitInfo.transform;
+                    weaponRef.GetComponent<Rigidbody>().isKinematic = true;
+                    weaponRef.parent = playerRightHand;
+                    weaponRef.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
+                    weaponRef.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
+
+                    rightHandWeapon = true;
+                    Debug.Log("Weapon in hand = " + weaponRef.name);
+                    //get weapon scriptable object
+                } else if(rightHandWeapon == true&&leftHandWeapon==false) {
+                    weaponRef.GetComponent<Rigidbody>().isKinematic = true;
+                    weaponRef.parent = playerLeftHand;
+                    //adjust weapon pos and rotation
+
+                    leftHandWeapon = true;
+                    //get weapon scriptable object
+                }
+            }*/
         }
     }
     
     private void HandleControls() {
         isAttacking = false;
-        if(weaponInHand && Input.GetKeyDown(KeyCode.Q)) {
-            weaponRef.GetComponent<Rigidbody>().isKinematic = false;
+        if(Input.GetKeyDown(KeyCode.Q)) {
+            if(leftHandWeapon==true) {
+                leftHandWeapon=false;
+                weaponRef = playerLeftHand.transform.GetChild(5).transform;
+                weaponRef.GetComponent<Rigidbody>().isKinematic = false;
+                weaponRef.parent = null;
+                Debug.Log("Left Weapon dropped");
+            } else if (rightHandWeapon==true) {
+                rightHandWeapon=false;
+                weaponRef = playerRightHand.transform.GetChild(5).transform;
+                weaponRef.GetComponent<Rigidbody>().isKinematic = false;
+                weaponRef.parent = null;
+                Debug.Log("Right Weapon dropped");
+            }
+            /*weaponRef.GetComponent<Rigidbody>().isKinematic = false;
             weaponRef.parent = null;
             weaponInHand = false;
             isMelee=false;
-            Debug.Log("Weapon dropped");
-        } else if(weaponInHand && Input.GetKeyDown(KeyCode.Mouse0)) {
+            isOneHanded = false;*/
+        } else if(rightHandWeapon==true && Input.GetKeyDown(KeyCode.Mouse0)) {
             isAttacking = true;
             Debug.Log("Attack!");
         }
