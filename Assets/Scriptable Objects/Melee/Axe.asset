@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f0f9f31ea5314944b5ccd93384f1a6b, type: 3}
   m_Name: Axe
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 150197830006598058, guid: e44994741dd72e640aebd83005bbea58, type: 3}
   objectName: Axe
   isOneHanded: 0

@@ -14,7 +14,7 @@ public class MeleeWeaponScriptObj:ScriptableObject {
     public string GetObjectName() { 
         return objectName; 
     }
-    public bool GetIsOneHanded() {
+    public bool IsOneHanded() {
         return isOneHanded; 
     }
     

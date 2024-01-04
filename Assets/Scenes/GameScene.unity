@@ -1073,6 +1073,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1908520848}
   - component: {fileID: 1908520849}
+  - component: {fileID: 1908520851}
   - component: {fileID: 1908520850}
   m_Layer: 0
   m_Name: Player
@@ -1122,6 +1123,7 @@ MonoBehaviour:
   interactLayer:
     serializedVersion: 2
     m_Bits: 64
+  weaponList: {fileID: 1908520851}
   playerRightHand: {fileID: 2022165313}
   playerLeftHand: {fileID: 716622548}
 --- !u!143 &1908520850
@@ -1142,6 +1144,20 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: -0.18, y: 1.8, z: 0}
+--- !u!114 &1908520851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1908520847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91d0dfd3039c9ba498532c3d50870867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseballBat: {fileID: 11400000, guid: e0e6a4e7217111b42b04e32176d973da, type: 2}
+  axe: {fileID: 11400000, guid: 29cf1cf7fbb81a140a96c35dab557043, type: 2}
 --- !u!1001 &1908599179
 PrefabInstance:
   m_ObjectHideFlags: 0
