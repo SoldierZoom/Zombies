@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.9573351, g: 0.69973606, b: 0.47198272, a: 1}
+  m_IndirectSpecularColor: {r: 0.95731586, g: 0.69972134, b: 0.4719807, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1073,7 +1073,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1908520848}
   - component: {fileID: 1908520849}
-  - component: {fileID: 1908520851}
   - component: {fileID: 1908520850}
   m_Layer: 0
   m_Name: Player
@@ -1123,9 +1122,10 @@ MonoBehaviour:
   interactLayer:
     serializedVersion: 2
     m_Bits: 64
-  weaponList: {fileID: 1908520851}
+  weaponList: {fileID: 1972563021}
   playerRightHand: {fileID: 2022165313}
   playerLeftHand: {fileID: 716622548}
+  animator: {fileID: 1908599180}
 --- !u!143 &1908520850
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1144,20 +1144,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: -0.18, y: 1.8, z: 0}
---- !u!114 &1908520851
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1908520847}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91d0dfd3039c9ba498532c3d50870867, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseballBat: {fileID: 11400000, guid: e0e6a4e7217111b42b04e32176d973da, type: 2}
-  axe: {fileID: 11400000, guid: 29cf1cf7fbb81a140a96c35dab557043, type: 2}
 --- !u!1001 &1908599179
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2267,6 +2253,57 @@ PrefabInstance:
       objectReference: {fileID: 1908520849}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 69c3ed15e9d13481e8f7dc4db5532fb6, type: 3}
+--- !u!95 &1908599180 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: 69c3ed15e9d13481e8f7dc4db5532fb6, type: 3}
+  m_PrefabInstance: {fileID: 1908599179}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1972563020
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1972563022}
+  - component: {fileID: 1972563021}
+  m_Layer: 0
+  m_Name: World
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1972563021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972563020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91d0dfd3039c9ba498532c3d50870867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseballBat: {fileID: 11400000, guid: e0e6a4e7217111b42b04e32176d973da, type: 2}
+  axe: {fileID: 11400000, guid: 29cf1cf7fbb81a140a96c35dab557043, type: 2}
+--- !u!4 &1972563022
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972563020}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.6825323, y: 0.6246375, z: -20.273575}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2022165313 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400248, guid: 69c3ed15e9d13481e8f7dc4db5532fb6, type: 3}
