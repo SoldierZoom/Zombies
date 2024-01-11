@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 150197830006598058, guid: e44994741dd72e640aebd83005bbea58, type: 3}
   objectName: Axe
-  isOneHanded: 0
+  isOneHanded: 1

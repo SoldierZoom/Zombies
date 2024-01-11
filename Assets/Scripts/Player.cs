@@ -66,7 +66,7 @@ public class Player : MonoBehaviour {
             isWalking = true;
         }
         //adds sprint multiplier and activates isSprinting if sprintkey pressed
-        if(Input.GetKey(KeyCode.LeftShift)&&animator.GetCurrentAnimatorStateInfo(0).IsName("Melee Attack A1")==false) {
+        if(Input.GetKey(KeyCode.LeftShift)&&animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1")==false) {
             sprintMultiplier = 3f;
             isSprinting = true;
         }
@@ -96,11 +96,15 @@ public class Player : MonoBehaviour {
         //checking if object in the interact layer is within 2 units of the player in the direction they're looking
         if(Physics.CapsuleCast(transform.position + Vector3.up * playerHeight,transform.position,.5f,movDir,out RaycastHit hitInfo,2f,interactLayer)) {
             weaponRef = hitInfo.transform;
+            //checking if weapon is melee through "Melee" tag
             if(weaponRef.CompareTag("Melee")) {
+                //checks if player has no weapon in right hand
                 if(rightHandWeapon == false) {
+                    //finding scriptable object for weapon
                     rightHandSO = weaponList.FindSO(weaponRef.name);
                     isOneHanded = rightHandSO.IsOneHanded();
 
+                    //makes object kinematic, sets parent to player's hand and updates object's local pos
                     weaponRef.GetComponent<Rigidbody>().isKinematic = true;
                     weaponRef.parent = playerRightHand;
                     weaponRef.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
@@ -108,13 +112,15 @@ public class Player : MonoBehaviour {
                     rightHandWeapon = true;
                     Debug.Log("Right Weapon in hand = " + weaponRef.name);
 
+                    //sets leftHand bool to true if weapon is 2 handed
                     if(isOneHanded==false) {
                         leftHandWeapon = true;
                         Debug.Log("Left Weapon in hand = " + weaponRef.name);
                     }
-
-                } else if(rightHandWeapon == true && leftHandWeapon==false) {
+                    //checks if player only has weapon in right hand and picked object isn't the weapon in their right hand
+                } else if(rightHandWeapon == true && leftHandWeapon==false && weaponRef.parent != playerRightHand) {
                     leftHandSO = weaponList.FindSO(weaponRef.name);
+                    //makes sure weapon isn't two handed
                     if (leftHandSO.IsOneHanded()==true) {
                         weaponRef.GetComponent<Rigidbody>().isKinematic = true;
                         weaponRef.parent = playerLeftHand;
@@ -131,12 +137,14 @@ public class Player : MonoBehaviour {
     }
     
     private void HandleControls() {
+        //resets isAttacking each update so anim doesn't play continuous
         isAttacking = false;
         if(Input.GetKeyDown(KeyCode.Q)) {
             if(leftHandWeapon==true) {
                 leftHandWeapon = false;
                 if(isOneHanded==true) {
                     leftHandSO = null;
+                    //finds weapon player is holding in left hand and sets its values back to the original
                     weaponRef = playerLeftHand.transform.GetChild(5).transform;
                     weaponRef.GetComponent<Rigidbody>().isKinematic = false;
                     weaponRef.parent = null;
@@ -165,7 +173,7 @@ public class Player : MonoBehaviour {
     }
 
 
-
+    //animation bool return functions
     public bool IsWalking { get { return isWalking; } }
     public bool IsSprinting { get { return isSprinting; } }
     public bool IsJumping { get { return isJumping; } }
