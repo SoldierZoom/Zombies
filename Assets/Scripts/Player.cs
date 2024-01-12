@@ -23,12 +23,13 @@ public class Player : MonoBehaviour {
     [SerializeField] private LayerMask interactLayer;
     //picking up weapon
     [SerializeField] WeaponList weaponList;
-    [SerializeField] private Transform playerRightHand, playerLeftHand;
     private Transform weaponRef;
+    [SerializeField] private Transform playerRightHand, playerLeftHand, floatingGun;
     private MeleeWeaponScriptObj rightHandSO, leftHandSO;
-    //private bool weaponInHand;
+    private RangedWeaponSO rangedWeaponSO;
+    private bool meleeEquipped;
     //animation state bools
-    private bool isWalking, isSprinting, isJumping, isAttacking, rightHandWeapon, leftHandWeapon, isOneHanded;
+    private bool isWalking, isSprinting, isJumping, isAttacking, rightHandWeapon, leftHandWeapon, rangedWeapon, isOneHanded;
     [SerializeField] private Animator animator;
 
     // Start is called before the first frame update
@@ -65,8 +66,8 @@ public class Player : MonoBehaviour {
         if(movDir != Vector3.zero) {
             isWalking = true;
         }
-        //adds sprint multiplier and activates isSprinting if sprintkey pressed
-        if(Input.GetKey(KeyCode.LeftShift)&&animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1")==false) {
+        //adds sprint multiplier and activates isSprinting if sprintkey pressed and attack anim isn't playing
+        if(Input.GetKey(KeyCode.LeftShift)&&(animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1")==false||animator.GetCurrentAnimatorStateInfo(2).IsName("Melee Attack A1") == false)) {
             sprintMultiplier = 3f;
             isSprinting = true;
         }
@@ -103,12 +104,7 @@ public class Player : MonoBehaviour {
                     //finding scriptable object for weapon
                     rightHandSO = weaponList.FindSO(weaponRef.name);
                     isOneHanded = rightHandSO.IsOneHanded();
-
-                    //makes object kinematic, sets parent to player's hand and updates object's local pos
-                    weaponRef.GetComponent<Rigidbody>().isKinematic = true;
-                    weaponRef.parent = playerRightHand;
-                    weaponRef.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
-                    weaponRef.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
+                    IntitialiseWeapon(weaponRef,playerRightHand);
                     rightHandWeapon = true;
                     Debug.Log("Right Weapon in hand = " + weaponRef.name);
 
@@ -122,16 +118,15 @@ public class Player : MonoBehaviour {
                     leftHandSO = weaponList.FindSO(weaponRef.name);
                     //makes sure weapon isn't two handed
                     if (leftHandSO.IsOneHanded()==true) {
-                        weaponRef.GetComponent<Rigidbody>().isKinematic = true;
-                        weaponRef.parent = playerLeftHand;
-                        weaponRef.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
-                        weaponRef.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
+                        IntitialiseWeapon(weaponRef,playerLeftHand);
                         leftHandWeapon = true;
                         Debug.Log("Left Weapon in hand = " + weaponRef.name);
                     } else {
                         Debug.Log("Hands are full");
                     }
                 }
+            } else if(weaponRef.CompareTag("Ranged")) {
+
             }
         }
     }
@@ -144,30 +139,29 @@ public class Player : MonoBehaviour {
                 leftHandWeapon = false;
                 if(isOneHanded==true) {
                     leftHandSO = null;
-                    //finds weapon player is holding in left hand and sets its values back to the original
-                    weaponRef = playerLeftHand.transform.GetChild(5).transform;
-                    weaponRef.GetComponent<Rigidbody>().isKinematic = false;
-                    weaponRef.parent = null;
+                    DropWeapon(playerLeftHand,5);
                     Debug.Log("Left Weapon dropped");
                 } else {
                     rightHandWeapon = false;
                     rightHandSO=null;
-                    weaponRef = playerRightHand.transform.GetChild(5).transform;
-                    weaponRef.GetComponent<Rigidbody>().isKinematic = false;
-                    weaponRef.parent = null;
+                    DropWeapon(playerRightHand,5);
                     Debug.Log("Right Weapon dropped");
                 }
             } else if (rightHandWeapon==true) {
                 rightHandWeapon = false;
                 rightHandSO = null;
-                weaponRef = playerRightHand.transform.GetChild(5).transform;
-                weaponRef.GetComponent<Rigidbody>().isKinematic = false;
-                weaponRef.parent = null;
+                DropWeapon(playerRightHand,5);
                 Debug.Log("Right Weapon dropped");
             }
         } else if(rightHandWeapon==true && Input.GetKeyDown(KeyCode.Mouse0)) {
             isAttacking = true;
             Debug.Log("Attack!");
+        } else if(Input.GetKeyDown(KeyCode.Alpha1) && (animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1") == false || animator.GetCurrentAnimatorStateInfo(2).IsName("Melee Attack A1") == false)) {
+            if(rightHandWeapon==true) {
+                ToggleWeapon(playerRightHand,5);
+            } if(leftHandWeapon==true&&isOneHanded==true) {
+                ToggleWeapon(playerLeftHand,5);
+            }
         }
 
     }
@@ -180,7 +174,29 @@ public class Player : MonoBehaviour {
     public bool IsAttacking { get { return isAttacking; } }
     public bool RightHandWeapon { get { return rightHandWeapon; } }
     public bool LeftHandWeapon { get { return leftHandWeapon; } }
+    public bool IsMeleeEquipped() { 
+        if(rightHandWeapon == true) {
+            return playerRightHand.GetChild(5).gameObject.activeSelf;
+        } else {
+            return false;
+        }
+    }
     public bool IsOneHanded { get { return isOneHanded; } }
-
+    //general functions
+    private void IntitialiseWeapon(Transform weapon, Transform parent) {
+        weapon.GetComponent<Rigidbody>().isKinematic = true;
+        weapon.parent = parent;
+        weapon.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
+        weapon.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
+    }
+    private void DropWeapon(Transform parent,int index) {
+        Transform weapon = parent.GetChild(index);
+        weapon.GetComponent<Rigidbody>().isKinematic = false;
+        weapon.parent = null;
+    }
+    private void ToggleWeapon(Transform parent,int index) {
+        GameObject weapon = parent.GetChild(index).gameObject;
+        weapon.SetActive(!weapon.activeSelf);
+    }
 
 }
