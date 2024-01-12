@@ -15,6 +15,7 @@ public class PlayerAnimator : MonoBehaviour {
         animator.SetBool("isAttacking",player.IsAttacking);
         animator.SetBool("rightHandWeapon",player.RightHandWeapon);
         animator.SetBool("leftHandWeapon",player.LeftHandWeapon);
+        animator.SetBool("isMeleeEquipped",player.IsMeleeEquipped());
         animator.SetBool("isOneHanded",player.IsOneHanded);
     }
 }
