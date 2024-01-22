@@ -67,7 +67,7 @@ public class Player : MonoBehaviour {
             isWalking = true;
         }
         //adds sprint multiplier and activates isSprinting if sprintkey pressed and attack anim isn't playing
-        if(Input.GetKey(KeyCode.LeftShift)&&(animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1")==false||animator.GetCurrentAnimatorStateInfo(2).IsName("Melee Attack A1") == false)) {
+        if(Input.GetKey(KeyCode.LeftShift)&&(animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1")==false && animator.GetCurrentAnimatorStateInfo(2).IsName("Melee Attack A1") == false)) {
             sprintMultiplier = 3f;
             isSprinting = true;
         }
@@ -102,7 +102,7 @@ public class Player : MonoBehaviour {
                 //checks if player has no weapon in right hand
                 if(rightHandWeapon == false) {
                     //finding scriptable object for weapon
-                    rightHandSO = weaponList.FindSO(weaponRef.name);
+                    rightHandSO = weaponList.FindMeleeSO(weaponRef.name);
                     isOneHanded = rightHandSO.IsOneHanded();
                     IntitialiseWeapon(weaponRef,playerRightHand);
                     rightHandWeapon = true;
@@ -112,10 +112,12 @@ public class Player : MonoBehaviour {
                     if(isOneHanded==false) {
                         leftHandWeapon = true;
                         Debug.Log("Left Weapon in hand = " + weaponRef.name);
+                    } if(rangedWeapon) {
+                        ToggleWeapon(floatingGun,0,false);
                     }
                     //checks if player only has weapon in right hand and picked object isn't the weapon in their right hand
                 } else if(rightHandWeapon == true && leftHandWeapon==false && weaponRef.parent != playerRightHand) {
-                    leftHandSO = weaponList.FindSO(weaponRef.name);
+                    leftHandSO = weaponList.FindMeleeSO(weaponRef.name);
                     //makes sure weapon isn't two handed
                     if (leftHandSO.IsOneHanded()==true) {
                         IntitialiseWeapon(weaponRef,playerLeftHand);
@@ -123,10 +125,25 @@ public class Player : MonoBehaviour {
                         Debug.Log("Left Weapon in hand = " + weaponRef.name);
                     } else {
                         Debug.Log("Hands are full");
+                    }if(rangedWeapon) {
+                        ToggleWeapon(floatingGun,0,false);
                     }
                 }
-            } else if(weaponRef.CompareTag("Ranged")) {
-
+            } if(weaponRef.CompareTag("Ranged")) {
+                if(rangedWeapon == false) {
+                    Debug.Log("Picked up ranged Weapon");
+                    rangedWeaponSO = weaponList.FindRangedSO(weaponRef.name);
+                    IntitialiseWeapon(weaponRef,floatingGun,Quaternion.identity,Vector3.zero);
+                    rangedWeapon = true;
+                    if(IsMeleeEquipped()) {
+                        if(rightHandWeapon == true) {
+                            ToggleWeapon(playerRightHand,5,false);
+                        }
+                        if(leftHandWeapon == true && isOneHanded == true) {
+                            ToggleWeapon(playerLeftHand,5,false);
+                        }
+                    }
+                }
             }
         }
     }
@@ -135,32 +152,43 @@ public class Player : MonoBehaviour {
         //resets isAttacking each update so anim doesn't play continuous
         isAttacking = false;
         if(Input.GetKeyDown(KeyCode.Q)) {
-            if(leftHandWeapon==true) {
-                leftHandWeapon = false;
-                if(isOneHanded==true) {
-                    leftHandSO = null;
-                    DropWeapon(playerLeftHand,5);
-                    Debug.Log("Left Weapon dropped");
-                } else {
+            if(IsMeleeEquipped()) {
+                if(leftHandWeapon == true) {
+                    leftHandWeapon = false;
+                    if(isOneHanded == true) {
+                        DropWeapon(playerLeftHand,5);
+                        Debug.Log("Left Weapon dropped");
+                    } else {
+                        rightHandWeapon = false;
+                        DropWeapon(playerRightHand,5);
+                        Debug.Log("Right Weapon dropped");
+                    }
+                } else if(rightHandWeapon == true) {
                     rightHandWeapon = false;
-                    rightHandSO=null;
                     DropWeapon(playerRightHand,5);
                     Debug.Log("Right Weapon dropped");
                 }
-            } else if (rightHandWeapon==true) {
-                rightHandWeapon = false;
-                rightHandSO = null;
-                DropWeapon(playerRightHand,5);
-                Debug.Log("Right Weapon dropped");
+            } else {
+                if(rangedWeapon) {
+                    rangedWeapon = false;
+                    DropWeapon(floatingGun,0);
+                    Debug.Log("Gun dropped");
+                }
             }
         } else if(rightHandWeapon==true && Input.GetKeyDown(KeyCode.Mouse0)) {
             isAttacking = true;
             Debug.Log("Attack!");
-        } else if(Input.GetKeyDown(KeyCode.Alpha1) && (animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1") == false || animator.GetCurrentAnimatorStateInfo(2).IsName("Melee Attack A1") == false)) {
-            if(rightHandWeapon==true) {
-                ToggleWeapon(playerRightHand,5);
-            } if(leftHandWeapon==true&&isOneHanded==true) {
-                ToggleWeapon(playerLeftHand,5);
+        } else if (animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1") == false && animator.GetCurrentAnimatorStateInfo(2).IsName("Melee Attack A1") == false) {
+            if((Input.GetKeyDown(KeyCode.Alpha1) && IsMeleeEquipped() == false)|| (Input.GetKeyDown(KeyCode.Alpha2) && IsMeleeEquipped() == true && !rightHandWeapon)) {
+                if(rightHandWeapon == true) {
+                    ToggleWeapon(playerRightHand,5);
+                }
+                if(leftHandWeapon == true && isOneHanded == true) {
+                    ToggleWeapon(playerLeftHand,5);
+                }
+                if(rangedWeapon == true) {
+                    ToggleWeapon(floatingGun,0);
+                }
             }
         }
 
@@ -183,16 +211,23 @@ public class Player : MonoBehaviour {
     }
     public bool IsOneHanded { get { return isOneHanded; } }
     //general functions
-    private void IntitialiseWeapon(Transform weapon, Transform parent) {
+    private void IntitialiseWeapon(Transform weapon, Transform parent, Quaternion rotation, Vector3 pos) {
         weapon.GetComponent<Rigidbody>().isKinematic = true;
         weapon.parent = parent;
-        weapon.localRotation = Quaternion.Euler(new Vector3(15f,-15f));
-        weapon.localPosition = new Vector3(-0.0696f,-0.0002f,-0.0032f);
+        weapon.localRotation = rotation;
+        weapon.localPosition = pos;
+    }
+    private void IntitialiseWeapon(Transform weapon, Transform parent) {
+        IntitialiseWeapon(weapon, parent,Quaternion.Euler(new Vector3(15f,-15f)),new Vector3(-0.0696f,-0.0002f,-0.0032f));
     }
     private void DropWeapon(Transform parent,int index) {
         Transform weapon = parent.GetChild(index);
         weapon.GetComponent<Rigidbody>().isKinematic = false;
         weapon.parent = null;
+    }
+    private void ToggleWeapon(Transform parent,int index, bool state) {
+        GameObject weapon = parent.GetChild(index).gameObject;
+        weapon.SetActive(state);
     }
     private void ToggleWeapon(Transform parent,int index) {
         GameObject weapon = parent.GetChild(index).gameObject;
