@@ -31,6 +31,8 @@ public class Player : MonoBehaviour {
     //animation state bools
     private bool isWalking, isSprinting, isJumping, isAttacking, rightHandWeapon, leftHandWeapon, rangedWeapon, isOneHanded;
     [SerializeField] private Animator animator;
+    //shooting
+    [SerializeField] private LayerMask hitabbleLayer;
 
     // Start is called before the first frame update
     void Start() {
@@ -67,7 +69,7 @@ public class Player : MonoBehaviour {
             isWalking = true;
         }
         //adds sprint multiplier and activates isSprinting if sprintkey pressed and attack anim isn't playing
-        if(Input.GetKey(KeyCode.LeftShift)&&(animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1")==false && animator.GetCurrentAnimatorStateInfo(2).IsName("Melee Attack A1") == false)) {
+        if(Input.GetKey(KeyCode.LeftShift)&&!AttackAnimPlaying()) {
             sprintMultiplier = 3f;
             isSprinting = true;
         }
@@ -127,6 +129,7 @@ public class Player : MonoBehaviour {
                         Debug.Log("Hands are full");
                     }if(rangedWeapon) {
                         ToggleWeapon(floatingGun,0,false);
+                        ToggleWeapon(playerRightHand,5,true);
                     }
                 }
             } if(weaponRef.CompareTag("Ranged")) {
@@ -151,35 +154,40 @@ public class Player : MonoBehaviour {
     private void HandleControls() {
         //resets isAttacking each update so anim doesn't play continuous
         isAttacking = false;
-        if(Input.GetKeyDown(KeyCode.Q)) {
-            if(IsMeleeEquipped()) {
-                if(leftHandWeapon == true) {
-                    leftHandWeapon = false;
-                    if(isOneHanded == true) {
-                        DropWeapon(playerLeftHand,5);
-                        Debug.Log("Left Weapon dropped");
-                    } else {
+        //drops the weapon currently in the player's hand
+        if(!AttackAnimPlaying()) {
+            if(Input.GetKeyDown(KeyCode.Q)) {
+                if(IsMeleeEquipped()) {
+                    if(leftHandWeapon == true) {
+                        leftHandWeapon = false;
+                        if(isOneHanded == true) {
+                            DropWeapon(playerLeftHand,5);
+                            Debug.Log("Left Weapon dropped");
+                        } else {
+                            rightHandWeapon = false;
+                            DropWeapon(playerRightHand,5);
+                            Debug.Log("Right Weapon dropped");
+                        }
+                    } else if(rightHandWeapon == true) {
                         rightHandWeapon = false;
                         DropWeapon(playerRightHand,5);
                         Debug.Log("Right Weapon dropped");
                     }
-                } else if(rightHandWeapon == true) {
-                    rightHandWeapon = false;
-                    DropWeapon(playerRightHand,5);
-                    Debug.Log("Right Weapon dropped");
+                } else {
+                    if(rangedWeapon) {
+                        rangedWeapon = false;
+                        DropWeapon(floatingGun,0);
+                        Debug.Log("Gun dropped");
+                    }
                 }
-            } else {
-                if(rangedWeapon) {
-                    rangedWeapon = false;
-                    DropWeapon(floatingGun,0);
-                    Debug.Log("Gun dropped");
+            } else if(Input.GetKeyDown(KeyCode.Mouse0) && (rightHandWeapon || rangedWeapon)) {
+                isAttacking = true;
+                Debug.Log("Attack!");
+                if(!IsMeleeEquipped()&&rangedWeapon) {
+                    /*if(Physics.Raycast(transform.position + Vector3.up * playerHeight,movDir,weaponList.GetShootingRange(),hittableLayer)) { 
+                    }*/
                 }
-            }
-        } else if(rightHandWeapon==true && Input.GetKeyDown(KeyCode.Mouse0)) {
-            isAttacking = true;
-            Debug.Log("Attack!");
-        } else if (animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1") == false && animator.GetCurrentAnimatorStateInfo(2).IsName("Melee Attack A1") == false) {
-            if((Input.GetKeyDown(KeyCode.Alpha1) && IsMeleeEquipped() == false)|| (Input.GetKeyDown(KeyCode.Alpha2) && IsMeleeEquipped() == true && !rightHandWeapon)) {
+            } else if((Input.GetKeyDown(KeyCode.Alpha1) && !IsMeleeEquipped() && rightHandWeapon) || (Input.GetKeyDown(KeyCode.Alpha2)) && (!rightHandWeapon || IsMeleeEquipped())) {
                 if(rightHandWeapon == true) {
                     ToggleWeapon(playerRightHand,5);
                 }
@@ -234,4 +242,11 @@ public class Player : MonoBehaviour {
         weapon.SetActive(!weapon.activeSelf);
     }
 
+    private bool AttackAnimPlaying() {
+        if(animator.GetCurrentAnimatorStateInfo(1).IsName("Melee Attack A1")||animator.GetCurrentAnimatorStateInfo(2).IsName("Melee Attack A1")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

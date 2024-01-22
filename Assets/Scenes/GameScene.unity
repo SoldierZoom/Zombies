@@ -1165,6 +1165,9 @@ MonoBehaviour:
   playerLeftHand: {fileID: 716622548}
   floatingGun: {fileID: 1415450293}
   animator: {fileID: 1908599180}
+  hitabbleLayer:
+    serializedVersion: 2
+    m_Bits: 328
 --- !u!143 &1908520850
 CharacterController:
   m_ObjectHideFlags: 0
