@@ -32,7 +32,7 @@ public class Player : MonoBehaviour {
     private bool isWalking, isSprinting, isJumping, isAttacking, rightHandWeapon, leftHandWeapon, rangedWeapon, isOneHanded;
     [SerializeField] private Animator animator;
     //shooting
-    [SerializeField] private LayerMask hitabbleLayer;
+    [SerializeField] private LayerMask hittableLayer;
 
     // Start is called before the first frame update
     void Start() {
@@ -60,10 +60,8 @@ public class Player : MonoBehaviour {
         }
         //reseting sprint multiplier
         sprintMultiplier = 1f;
-        //creates movement vector relative to the player's position based on their input
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-        Vector3 movDir = transform.right * x + transform.forward * z;
+        //gets movement vector for direction player is moving
+        Vector3 movDir = getMovDir();
         //making isWalking true when player is moving
         if(movDir != Vector3.zero) {
             isWalking = true;
@@ -91,9 +89,7 @@ public class Player : MonoBehaviour {
     private void HandleInteractions() {
         float playerHeight = 3f;
         //creating 3D vector for direction player is looking/moving
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-        Vector3 movDir = transform.right * x + transform.forward * z;
+        Vector3 movDir = getMovDir();
 
         weaponRef = null;
         //checking if object in the interact layer is within 2 units of the player in the direction they're looking
@@ -182,10 +178,15 @@ public class Player : MonoBehaviour {
                 }
             } else if(Input.GetKeyDown(KeyCode.Mouse0) && (rightHandWeapon || rangedWeapon)) {
                 isAttacking = true;
-                Debug.Log("Attack!");
+                //Debug.Log("Attack!");
                 if(!IsMeleeEquipped()&&rangedWeapon) {
-                    /*if(Physics.Raycast(transform.position + Vector3.up * playerHeight,movDir,weaponList.GetShootingRange(),hittableLayer)) { 
-                    }*/
+                    //Debug.DrawLine(floatingGun.position,floatingGun.position+100*getMovDir().normalized,Color.green,5);
+                    Debug.DrawRay(floatingGun.position,getMovDir(),Color.green,5);
+                    if(Physics.Raycast(floatingGun.position,getMovDir(),rangedWeaponSO.GetMaxShootingRange(),hittableLayer)) {
+                        Debug.Log("Something got hit");
+                    } else {
+                        Debug.Log("You can't shoot");
+                    }
                 }
             } else if((Input.GetKeyDown(KeyCode.Alpha1) && !IsMeleeEquipped() && rightHandWeapon) || (Input.GetKeyDown(KeyCode.Alpha2)) && (!rightHandWeapon || IsMeleeEquipped())) {
                 if(rightHandWeapon == true) {
@@ -240,6 +241,12 @@ public class Player : MonoBehaviour {
     private void ToggleWeapon(Transform parent,int index) {
         GameObject weapon = parent.GetChild(index).gameObject;
         weapon.SetActive(!weapon.activeSelf);
+    }
+    //returns movement vector relative to the player's position based on their input
+    private Vector3 getMovDir() {
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+        return (transform.right * x + transform.forward * z);
     }
 
     private bool AttackAnimPlaying() {
