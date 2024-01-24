@@ -182,7 +182,7 @@ public class Player : MonoBehaviour {
                 if(!IsMeleeEquipped()&&rangedWeapon) {
                     //Debug.DrawLine(floatingGun.position,floatingGun.position+100*getMovDir().normalized,Color.green,5);
                     Debug.DrawRay(floatingGun.position,getMovDir(),Color.green,5);
-                    if(Physics.Raycast(floatingGun.position,getMovDir(),rangedWeaponSO.GetMaxShootingRange(),hittableLayer)) {
+                    if(Physics.Raycast(floatingGun.position,this.transform.forward,rangedWeaponSO.GetMaxShootingRange(),hittableLayer)) {
                         Debug.Log("Something got hit");
                     } else {
                         Debug.Log("You can't shoot");
