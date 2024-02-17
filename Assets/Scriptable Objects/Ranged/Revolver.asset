@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 2352288298213747965, guid: 6fa1df1711c2623408f169adb1f082ef, type: 3}
   objectName: Revolver
+  startingAmmo: 7
+  maxAmmo: 72
   maxAmmoInGun: 6
   maxShootingRange: 35
-  shootDelay: 0
+  shootDelay: 5

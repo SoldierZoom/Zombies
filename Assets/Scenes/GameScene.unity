@@ -1164,6 +1164,7 @@ MonoBehaviour:
   playerRightHand: {fileID: 2022165313}
   playerLeftHand: {fileID: 716622548}
   floatingGun: {fileID: 1415450293}
+  playerCamera: {fileID: 1268614355}
   animator: {fileID: 1908599180}
   hittableLayer:
     serializedVersion: 2

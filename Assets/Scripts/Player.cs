@@ -24,7 +24,7 @@ public class Player : MonoBehaviour {
     //picking up weapon
     [SerializeField] WeaponList weaponList;
     private Transform weaponRef;
-    [SerializeField] private Transform playerRightHand, playerLeftHand, floatingGun;
+    [SerializeField] private Transform playerRightHand, playerLeftHand, floatingGun, playerCamera;
     private MeleeWeaponScriptObj rightHandSO, leftHandSO;
     private RangedWeaponSO rangedWeaponSO;
     private bool meleeEquipped;
@@ -33,6 +33,7 @@ public class Player : MonoBehaviour {
     [SerializeField] private Animator animator;
     //shooting
     [SerializeField] private LayerMask hittableLayer;
+    float counter=0;
 
     // Start is called before the first frame update
     void Start() {
@@ -132,6 +133,7 @@ public class Player : MonoBehaviour {
                 if(!rangedWeapon) {
                     Debug.Log("Picked up ranged Weapon");
                     rangedWeaponSO = weaponList.FindRangedSO(weaponRef.name);
+                    rangedWeaponSO.IntialiseAmmo();
                     IntitialiseWeapon(weaponRef,floatingGun,Quaternion.identity,Vector3.zero);
                     rangedWeapon = true;
                     if(IsMeleeEquipped()) {
@@ -179,12 +181,11 @@ public class Player : MonoBehaviour {
             } else if(Input.GetKeyDown(KeyCode.Mouse0) && (rightHandWeapon || rangedWeapon)) {
                 isAttacking = true;
                 //Debug.Log("Attack!");
-                if(!IsMeleeEquipped()&&rangedWeapon) {
-                    if(Physics.Raycast(floatingGun.position,this.transform.forward,rangedWeaponSO.GetMaxShootingRange(),hittableLayer)) {
-                        Debug.Log("Something got hit");
-                    } else {
-                        Debug.Log("You can't shoot");
-                    }
+                if(!IsMeleeEquipped()&&rangedWeapon&&counter<=0) {
+                    rangedWeaponSO.Shoot(floatingGun.position,playerCamera.forward,hittableLayer);
+                    counter = rangedWeaponSO.GetShootDelay()*Time.deltaTime;
+                } else if(counter>0) {
+                    counter-=Time.deltaTime;
                 }
             } else if((Input.GetKeyDown(KeyCode.Alpha1) && !IsMeleeEquipped() && rightHandWeapon) || (Input.GetKeyDown(KeyCode.Alpha2)) && (!rightHandWeapon || IsMeleeEquipped())) {
                 if(rightHandWeapon) {
@@ -196,6 +197,8 @@ public class Player : MonoBehaviour {
                 if(rangedWeapon) {
                     ToggleWeapon(floatingGun,0);
                 }
+            } else if(Input.GetKeyDown(KeyCode.R)&&rangedWeapon&&!IsMeleeEquipped()) {
+                rangedWeaponSO.Reload();
             }
         }
 
