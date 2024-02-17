@@ -182,6 +182,7 @@ public class Player : MonoBehaviour {
                 isAttacking = true;
                 //Debug.Log("Attack!");
                 if(!IsMeleeEquipped()&&rangedWeapon&&counter<=0) {
+                    Debug.Log("Shot fired");
                     rangedWeaponSO.Shoot(floatingGun.position,playerCamera.forward,hittableLayer);
                     counter = rangedWeaponSO.GetShootDelay()*Time.deltaTime;
                 } else if(counter>0) {

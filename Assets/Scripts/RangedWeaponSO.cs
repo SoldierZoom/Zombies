@@ -35,9 +35,9 @@ public class RangedWeaponSO:ScriptableObject {
         } else {
             ammoInGun -= 1;
             if(Physics.Raycast(pos,dirVector,maxShootingRange,hittableLayer)) {
-                Debug.Log("Something got hit");
+                //Debug.Log("Something got hit");
             } else {
-                Debug.Log("You can't shoot");
+                //Debug.Log("You can't shoot");
             }
         }
     }
