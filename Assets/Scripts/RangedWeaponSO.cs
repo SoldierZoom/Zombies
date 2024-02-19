@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ public class RangedWeaponSO:ScriptableObject {
     [SerializeField] private Transform prefab;
     [SerializeField] private string objectName;
     private int ammo,ammoInGun;
-    [SerializeField] private int startingAmmo, maxAmmo, maxAmmoInGun, maxShootingRange;
+    [SerializeField] private int startingAmmo, maxAmmo, maxAmmoInGun, maxShootingRange, reloadTime;
     [SerializeField] private float shootDelay;
 
     //get functions
@@ -34,14 +35,22 @@ public class RangedWeaponSO:ScriptableObject {
             Reload();
         } else {
             ammoInGun -= 1;
-            if(Physics.Raycast(pos,dirVector,maxShootingRange,hittableLayer)) {
+            if(Physics.Raycast(pos,dirVector,out RaycastHit hitInfo,maxShootingRange,hittableLayer)) {
                 //Debug.Log("Something got hit");
+                //checking if object hit is in the enemy layer
+                //Debug.Log(hitInfo.transform.gameObject.layer.ToString());
+                if(string.Equals(hitInfo.transform.gameObject.layer.ToString(),"8")) {
+                    Debug.Log("Enemy hit!");
+                }
             } else {
                 //Debug.Log("You can't shoot");
             }
         }
     }
     public void Reload() {
+        //temp reload delay
+        Debug.Log("Reloading...");
+        Thread.Sleep(reloadTime);
         Debug.Log("Before Reloading - Ammo: "+ammo+" Ammo in gun: "+ammoInGun);
         //checking if gun is already fully loaded and player has ammo to reload
         if (ammoInGun!=maxAmmoInGun&&ammo!=0) {
@@ -59,5 +68,4 @@ public class RangedWeaponSO:ScriptableObject {
         }
         Debug.Log("After Reloading - Ammo: " + ammo + " Ammo in gun: " + ammoInGun);
     }
-
 }

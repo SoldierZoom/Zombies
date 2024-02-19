@@ -18,4 +18,5 @@ MonoBehaviour:
   maxAmmo: 72
   maxAmmoInGun: 6
   maxShootingRange: 35
+  reloadTime: 1800
   shootDelay: 0.75
