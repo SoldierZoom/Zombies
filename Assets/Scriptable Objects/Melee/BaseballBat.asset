@@ -15,3 +15,4 @@ MonoBehaviour:
   prefab: {fileID: 6822209339082312827, guid: fe569a5b0b0b3624fa8d5d2b3fcf4395, type: 3}
   objectName: BaseballBat
   isOneHanded: 1
+  damage: 100
