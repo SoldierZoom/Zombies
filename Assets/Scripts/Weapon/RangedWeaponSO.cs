@@ -30,12 +30,12 @@ public class RangedWeaponSO:ScriptableObject {
         ammo = startingAmmo;
         ammoInGun = maxAmmoInGun;
     } 
-    public void Shoot(Vector3 pos, Vector3 dirVector, LayerMask hittableLayer) {
+    public void Shoot(Vector3 pos, Vector3 dirVector, LayerMask hittableLayerMask) {
         if(ammoInGun == 0) {
             Reload();
         } else {
             ammoInGun -= 1;
-            if(Physics.Raycast(pos,dirVector,out RaycastHit hitInfo,maxShootingRange,hittableLayer)) {
+            if(Physics.Raycast(pos,dirVector,out RaycastHit hitInfo,maxShootingRange,hittableLayerMask)) {
                 //checking if object hit is in the enemy layer
                 //Debug.Log(hitInfo.transform.gameObject.layer.ToString());
                 if(hitInfo.transform.gameObject.layer==8) {
@@ -56,6 +56,7 @@ public class RangedWeaponSO:ScriptableObject {
         Debug.Log("Reloading...");
         while (i < reloadTime) {
             i += Time.deltaTime*60;
+            Debug.Log(i);
         }
         Debug.Log("Before Reloading - Ammo: "+ammo+" Ammo in gun: "+ammoInGun);
         //checking if gun is already fully loaded and player has ammo to reload
