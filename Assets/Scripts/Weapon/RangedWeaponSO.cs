@@ -51,16 +51,13 @@ public class RangedWeaponSO:ScriptableObject {
         }
     }
     public void Reload() {
-        float i=0;
-        //temp reload delay
+        float i = 0;
         Debug.Log("Reloading...");
-        while (i < reloadTime) {
-            i += Time.deltaTime*60;
-            Debug.Log(i);
-        }
-        Debug.Log("Before Reloading - Ammo: "+ammo+" Ammo in gun: "+ammoInGun);
+        //reload delay
+        //yield return new WaitForSeconds(reloadTime);
+        Debug.Log("Before Reloading - Ammo: " + ammo + " Ammo in gun: " + ammoInGun);
         //checking if gun is already fully loaded and player has ammo to reload
-        if (ammoInGun!=maxAmmoInGun&&ammo!=0) {
+        if(ammoInGun != maxAmmoInGun && ammo != 0) {
             //subtracting the amount that needs to be loaded from ammo
             ammo -= (maxAmmoInGun - ammoInGun);
             //checking if gun can be fully loaded
@@ -75,4 +72,6 @@ public class RangedWeaponSO:ScriptableObject {
         }
         Debug.Log("After Reloading - Ammo: " + ammo + " Ammo in gun: " + ammoInGun);
     }
+
 }
+
