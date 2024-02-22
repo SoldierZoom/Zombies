@@ -186,9 +186,12 @@ public class Player : MonoBehaviour {
                 if(!IsMeleeEquipped()&&rangedWeapon&&counter<=0) {
                     Debug.Log("Shot fired");
                     rangedWeaponSO.Shoot(floatingGun.position,playerCamera.forward,hittableLayer);
-                    counter = rangedWeaponSO.GetShootDelay();
-                } else if(counter>0) {
-                    counter-=Time.deltaTime*60;
+                    counter = rangedWeaponSO.GetShootDelay(); ;
+                } else if (IsMeleeEquipped()) {
+                    rightHandSO.Attack(playerRightHand.GetChild(5).position,playerCamera.forward,hittableLayer);
+                    if (leftHandSO!=null) {
+                        leftHandSO.Attack(playerLeftHand.GetChild(5).position,playerCamera.forward,hittableLayer);  
+                    }
                 }
             } else if((Input.GetKeyDown(KeyCode.Alpha1) && !IsMeleeEquipped() && rightHandWeapon) || (Input.GetKeyDown(KeyCode.Alpha2)) && (!rightHandWeapon || IsMeleeEquipped())) {
                 if(rightHandWeapon) {
@@ -203,10 +206,14 @@ public class Player : MonoBehaviour {
             } else if(Input.GetKeyDown(KeyCode.R)&&rangedWeapon&&!IsMeleeEquipped()) {
                 rangedWeaponSO.Reload();
             }
+        } if(counter > 0) {
+            counter -= Time.deltaTime;
         }
 
     }
-
+    void OnCollisionStay(Collision collision) {
+        Debug.Log(collision.gameObject.layer.ToString());
+    }
 
     //animation bool return functions
     public bool IsWalking { get { return isWalking; } }
