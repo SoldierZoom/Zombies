@@ -1234,7 +1234,7 @@ GameObject:
   m_Component:
   - component: {fileID: 400064}
   - component: {fileID: 13700000}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: tail_bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5392,7 +5392,7 @@ GameObject:
   m_Component:
   - component: {fileID: 400220}
   - component: {fileID: 13700020}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: hair_frontside
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6384,7 +6384,7 @@ GameObject:
   m_Component:
   - component: {fileID: 400256}
   - component: {fileID: 13700028}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: hair_front
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8389,7 +8389,7 @@ GameObject:
   m_Component:
   - component: {fileID: 400336}
   - component: {fileID: 13700034}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: tail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
