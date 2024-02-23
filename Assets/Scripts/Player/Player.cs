@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -71,7 +70,7 @@ public class Player : MonoBehaviour {
         }
         //adds sprint multiplier and activates isSprinting if sprintkey pressed and attack anim isn't playing
         if(Input.GetKey(KeyCode.LeftShift)&&!AttackAnimPlaying()) {
-            sprintMultiplier = 3f;
+            sprintMultiplier = 1.5f;
             isSprinting = true;
         }
         //provides charcter controller with movement vector for player 

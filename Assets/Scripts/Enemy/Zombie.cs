@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class Zombie : MonoBehaviour {
-    [SerializeField] private NavMeshAgent agent;
-    [SerializeField] private Transform player;
+    private NavMeshAgent agent;
+    private Transform player;
     [SerializeField] private LayerMask playerLayer;
     private float attackRange = 2;
     private bool isWalking, isSprinting, isAttacking;
@@ -11,6 +11,8 @@ public class Zombie : MonoBehaviour {
     void Start() {
         health = 75;
         this.gameObject.SetActive(true);
+        player = GameObject.Find("Player").transform;
+        agent = GetComponent<NavMeshAgent>();
     }
     void Update() {
         isAttacking = false;
@@ -50,7 +52,7 @@ public class Zombie : MonoBehaviour {
             health-=dmg;
         } else {
             health = 0;
-            this.gameObject.SetActive(false);
+            Destroy(this.gameObject);
         }
         Debug.Log("Zombie health now: " + health.ToString());
     }
